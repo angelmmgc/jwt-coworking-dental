@@ -137,8 +137,8 @@ public class AuthController {
      * @param username
      * @return
      */
-    @GetMapping("/username")
-    public ResponseEntity<?> getOne(@Param("username") String username){
+    @GetMapping("/username/{username}")
+    public ResponseEntity<?> getOne(@PathVariable String username){
 
 
         try {
@@ -151,8 +151,13 @@ public class AuthController {
     }
 
 
-    @GetMapping("/email")
-    public ResponseEntity<?> getByEmail(@Param("email") String email){
+    /**
+     * FUNCION OBTIENE EL USUARIO POR EMAIL
+     * @param email
+     * @return USUARIO EN FORMATO JSON
+     */
+    @GetMapping("/email/{email}")
+    public ResponseEntity<?> getByEmail(@PathVariable String email){
 
         try{
 

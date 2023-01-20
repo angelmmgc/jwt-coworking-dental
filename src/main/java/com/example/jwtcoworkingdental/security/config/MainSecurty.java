@@ -54,8 +54,8 @@ public class MainSecurty  {
         http.authorizeRequests().antMatchers("/auth").permitAll();//autorizado cualquiera para un nuevo registro
         http.authorizeRequests().antMatchers("/auth/login").permitAll();//autorizado cualquiera para logearse
         http.authorizeRequests().antMatchers("/auth/getall").hasRole("ADMIN");//solo los administradores tienen acceso a todos los usuarios
-        http.authorizeRequests().antMatchers("/auth/username").hasRole("ADMIN");//solo administrador puede buscar usuario por nombre
-        http.authorizeRequests().antMatchers("/auth/email/{email}").hasRole("ADMIN");//solo administrador puede buscar usuario por nombre
+        http.authorizeRequests().antMatchers("/auth/username/{username}").hasAnyRole("ADMIN","USER");//solo administrador puede buscar usuario por nombre
+        http.authorizeRequests().antMatchers("/auth/email/{email}").hasAnyRole("ADMIN","USER");//solo administrador puede buscar usuario por nombre
 
         http.authorizeRequests().antMatchers("/clinicas/**").hasRole("ADMIN");//administrador tiene acceso a todas los servicios de las clinicas
         http.authorizeRequests().antMatchers("/clinicas/{id}").hasRole("USER");//busqueda de clinicas con role de usuario
