@@ -17,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Configuration
@@ -36,8 +37,6 @@ public class MainSecurty  {
     @Autowired
     JwtTokenFilter jwtTokenFilter;
 
-
-
     AuthenticationManager authenticationManager;
 
 
@@ -51,15 +50,29 @@ public class MainSecurty  {
         http.authenticationManager(authenticationManager);
         http.csrf().disable();
         http.cors();
-        http.authorizeRequests().antMatchers("/auth").permitAll();//autorizado cualquiera para un nuevo registro
-        http.authorizeRequests().antMatchers("/auth/login").permitAll();//autorizado cualquiera para logearse
-        http.authorizeRequests().antMatchers("/auth/getall").hasRole("ADMIN");//solo los administradores tienen acceso a todos los usuarios
-        http.authorizeRequests().antMatchers("/auth/username/{username}").hasAnyRole("ADMIN","USER");//solo administrador puede buscar usuario por nombre
-        http.authorizeRequests().antMatchers("/auth/email/{email}").hasAnyRole("ADMIN","USER");//solo administrador puede buscar usuario por nombre
 
+        //login
+        http.authorizeRequests().antMatchers(HttpMethod.POST,"/auth").permitAll();//autorizado cualquiera para un nuevo registro
+        http.authorizeRequests().antMatchers("/auth/login").permitAll();//autorizado cualquiera para logearse
+
+        //busqueda
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/auth/getall").hasRole("ADMIN");//solo los administradores tienen acceso a todos los usuarios
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/auth/username/{username}").hasAnyRole("ADMIN","USER");//solo administrador puede buscar usuario por nombre
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/auth/email/{email}").hasAnyRole("ADMIN","USER");//solo administrador puede buscar usuario por nombre
         http.authorizeRequests().antMatchers("/clinicas/**").hasRole("ADMIN");//administrador tiene acceso a todas los servicios de las clinicas
-        http.authorizeRequests().antMatchers("/clinicas/{id}").hasRole("USER");//busqueda de clinicas con role de usuario
-        http.authorizeRequests().antMatchers("/clientes").hasRole("USER");
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/clinicas/{id}").hasRole("USER");//busqueda de clinicas con role de usuario
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/clientes").hasRole("USER");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/auth/username").hasRole("ADMIN");//solo administrador puede borrar usuario por nombre
+
+        //delete
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/auth/{username}").hasRole("ADMIN");//solo administrador puede borrar usuario por nombre
+        //http.authorizeRequests().antMatchers("/auth/delete/email").hasAnyRole("ADMIN","USER");//admin y user pueden actualizar
+
+        //update
+        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/auth/username").hasAnyRole("ADMIN","USER");//solo administrador puede borrar usuario por nombre
+        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/auth/email").hasAnyRole("ADMIN","USER");//solo administrador puede borrar usuario por nombre
+
+
         http.exceptionHandling().authenticationEntryPoint(jwtEntryPoint);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
