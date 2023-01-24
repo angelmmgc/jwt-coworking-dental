@@ -1,6 +1,9 @@
 package com.example.jwtcoworkingdental.security.entity;
 
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
@@ -15,6 +18,7 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
         })
+
 public class Usuario {
 
     @Id
@@ -93,9 +97,11 @@ public class Usuario {
     //ASOCIACIONES
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @OnDelete( action = OnDeleteAction.CASCADE )//borra desde la tabla usuarios el registro en la tabla user_roles el usuario con el id, al contraio no
     @JoinTable(name = "USER_ROLES",
             joinColumns = {
-                    @JoinColumn(name = "USER_ID")
+                    @JoinColumn(name = "USER_ID"),
+
             },
             inverseJoinColumns = {
                     @JoinColumn(name = "ROLE_ID") })
