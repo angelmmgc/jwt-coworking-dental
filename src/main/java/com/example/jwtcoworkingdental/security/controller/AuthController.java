@@ -1,7 +1,7 @@
 package com.example.jwtcoworkingdental.security.controller;
 
 
-import com.example.jwtcoworkingdental.entities.clinica.Clinica;
+
 import com.example.jwtcoworkingdental.security.dto.JwtDto;
 import com.example.jwtcoworkingdental.security.dto.LoginUsuario;
 import com.example.jwtcoworkingdental.security.dto.Mensaje;
@@ -14,7 +14,6 @@ import com.example.jwtcoworkingdental.security.mapper.NuevoUsuarioDTOtoUsuario;
 import com.example.jwtcoworkingdental.security.service.RolService;
 import com.example.jwtcoworkingdental.security.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,23 +21,18 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
-//NO DISPONGO DE LOS METODOS GENERICOS
+
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin
 public class AuthController {
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -60,16 +54,16 @@ public class AuthController {
     }
 
 /*
-            ********+FUNCIONES PARA TODOS LOS USUARIOS TANTO ADMIN COMO CLIENTE (REGISTRO Y LOGIN)***********
+            ********+FUNCIONES PARA NUEVO USUARIO ( register )***********
  */
     /**
-     * metodo de registro
-     * @param nuevoUsuario parámetro recibido de la consulta
-     * @param bindingResult parámetro para comprobar que la entrada de datos es correcta
-     * @return
+     * Método de registro
+     * @param nuevoUsuario Parámetro pasado en el cuerpo de la petición.
+     * @param bindingResult parámetro para comprobar que la entrada de datos es correcta.
+     * @return status ok y mensaje.
      */
     @PostMapping
-    public ResponseEntity<?> nuevo(@Valid @RequestBody NuevoUsuario nuevoUsuario, BindingResult bindingResult){
+    public ResponseEntity<?> register(@Valid @RequestBody NuevoUsuario nuevoUsuario, BindingResult bindingResult){
 
         if (bindingResult.hasErrors())
             return new ResponseEntity<>( bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
@@ -87,12 +81,21 @@ public class AuthController {
 
         Set<Rol> roles = new HashSet<>();
 
-
         //añadimos rol admin si el email tiene el dominio admin.edu
+
         if(nuevoUsuario.getEmail().split("@")[1].equals("admin.edu")){
-            roles.add(rolService.getByRolNombre(RolNombre.ROLE_ADMIN).get());
+
+            if (rolService.getByRolNombre(RolNombre.ROLE_ADMIN).isPresent()){
+                roles.add(rolService.getByRolNombre(RolNombre.ROLE_ADMIN).get());
+            }
+
+
         }else {
-            roles.add(rolService.getByRolNombre(RolNombre.ROLE_USER).get());
+
+            if (rolService.getByRolNombre(RolNombre.ROLE_USER).isPresent()){
+                roles.add(rolService.getByRolNombre(RolNombre.ROLE_USER).get());
+
+            }
         }
 
 
@@ -103,12 +106,16 @@ public class AuthController {
         return new ResponseEntity<>(new Mensaje("usuario guardado"),HttpStatus.CREATED);
     }
 
+    /*
+     ********+ FUNCIONES PARA TODOS LOS USUARIOS TANTO ADMIN COMO CLIENTES REGISTRADOS (login,getUserByUsername,getUserByEmail,updateUserByUsername) ***********
+     */
 
     /**
-     * metodo de login
-     * @param loginUsuario
-     * @param bindingResult
-     * @return
+     *
+     * Método de login
+     * @param loginUsuario . Parámetro pasado en el cuerpo de la petición.
+     * @param bindingResult .
+     * @return status ok
      */
     @PostMapping("/login")
     public ResponseEntity<JwtDto> login(@Valid @RequestBody LoginUsuario loginUsuario, BindingResult bindingResult){
@@ -133,12 +140,13 @@ public class AuthController {
     }
 
     /**
-     * función obtiene el usuario por username
-     * @param username
-     * @return
+     * Función obtiene el usuario por username
+     * @param username . Parámetro pasado por la url.
+     * @return Response status OK y usuario en formato json
+     *         Response status NOT_FOUND y mensaje en caso de no encontrar al usuario.
      */
     @GetMapping("/username/{username}")
-    public ResponseEntity<?> getOne(@PathVariable String username){
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username){
 
 
         try {
@@ -152,12 +160,13 @@ public class AuthController {
 
 
     /**
-     * FUNCION OBTIENE EL USUARIO POR EMAIL
-     * @param email
-     * @return USUARIO EN FORMATO JSON
+     * Función obtiene el usuario por email.
+     * @param email . Parámetro pasado por url.
+     * @return Response status OK y usuario en formato json
+     *         Response status NOT_FOUND y mensaje en caso de no encontrar al usuario.
      */
     @GetMapping("/email/{email}")
-    public ResponseEntity<?> getByEmail(@PathVariable String email){
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email){
 
         try{
 
@@ -169,25 +178,94 @@ public class AuthController {
 
     }
 
+    /**
+     * Función update del usuario por username para ADMIN Y USER.
+     * @param nuevoUsuario . Parámetro pasado en el cuerpo de la petición.
+     * @return Response status ok y el usuario actualizado en caso correcto.
+     *         Response status NOT_FOUND y mensaje en caso de no encontrar al usuario.
+     */
+    @PutMapping("/username")
+    public ResponseEntity<?> updateUserByUsername(@Valid @RequestBody NuevoUsuario nuevoUsuario){
+
+        System.out.println("actualizando por nombre");
+        String username = nuevoUsuario.getUserName();
+        try {
+
+            // if (usuarioService.existsByNombreUsuario(username)){
+
+            if (usuarioService.getByNombreUsuario(username).isPresent()){
+
+                Long id = usuarioService.getByNombreUsuario(username).get().getId();
+                Set<Rol> role = usuarioService.getByNombreUsuario(username).get().getRoles();
+                System.out.println("correcto" + role);
+
+                Usuario usuario = mapper.updatemap(nuevoUsuario,id,role);
+                usuarioService.save(usuario);
+            }
+
+            //}
+            return ResponseEntity.status(HttpStatus.OK).body(usuarioService.getByNombreUsuario(username));
+
+        }catch (Exception e){
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Error al actualizar. Por favor intente mas tarde.\"}");
+
+        }
+    }
+
+    /**
+     * Función update del usuario por email para ADMIN Y USER.
+     * @param nuevoUsuario . Parámetro pasado en el cuerpo de la petición.
+     * @return Response status ok y el usuario actualizado en caso correcto.
+     *         Response status NOT_FOUND y mensaje en caso de no encontrar al usuario.
+     */
+
+    @PutMapping("/email")
+    public ResponseEntity<?> updateUserByEmail(@Valid @RequestBody NuevoUsuario nuevoUsuario){
+
+        System.out.println("actualizando por email");
+        String email = nuevoUsuario.getEmail();
+        try {
+
+            if (usuarioService.getByEmailUsuario(email).isPresent()){
+
+                Long id = usuarioService.getByEmailUsuario(email).get().getId();
+                Set<Rol> role = usuarioService.getByEmailUsuario(email).get().getRoles();
+                System.out.println("correcto" + role);
+
+                Usuario usuario = mapper.updatemap(nuevoUsuario,id,role);
+                usuarioService.save(usuario);
+            }
+
+            //}
+            return ResponseEntity.status(HttpStatus.OK).body(usuarioService.getByEmailUsuario(email));
+
+        }catch (Exception e){
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Error al actualizar. Por favor intente mas tarde.\"}");
+
+        }
+
+    }
+
 
 
     /*
-     ********+ FUNCIONES SOLO ADMIN ***********
+     ********+ FUNCIONES PARA TODOS LOS USUARIOS TANTO ADMIN COMO CLIENTES REGISTRADOS (login,getUserByUsername,getUserByEmail,updateUserByUsername) ***********
+     ********+ FUNCIONES SOLO ADMIN (getAll, deleteByUsername)***********
      * TENER UN LISTADO DE TODOS LOS USUARIOS
      * ELIMINAR POR ID O NOMBRE
      * TIENE SENTIDO QUE UN ADMIN CREE UN USUARIO USER?
      */
 
 
-
-
     /**
-     * función obtiene todos los usuarios solo para administradores
-     * @return
+     * Función obtiene todos los usuarios solo para administradores.
+     * @return Response status OK y listado con todos los usuarios en formato json.
+     *         Response status NOT_FOUND y mensaje en caso de no encontrar al usuario.
      */
     @GetMapping("/getall")
-    public ResponseEntity<?> saludo_admin(){
-
+    public ResponseEntity<?> getAll(){
 
         try {
             return ResponseEntity.status(HttpStatus.OK).body(usuarioService.findAll());
@@ -198,45 +276,30 @@ public class AuthController {
         }
     }
 
-
-
     /**
-     * función update el usuario por username para ADMIN Y USER
-     * @param nuevoUsuario
-     * @return
+     * Función eliminar un usuario por username.
+     * @param username .Parámetro pasado por url.
+     * @return Response status OK y true en caso de eliminación correcta.
+     *         Response status NOT_FOUND y mensaje en caso de no encontrar al usuario.
+     *
      */
-    @PutMapping("/username")
-    public ResponseEntity<?> updateOne(@Valid @RequestBody NuevoUsuario nuevoUsuario, BindingResult bindingResult){
+    @DeleteMapping("/{username}")
+    public ResponseEntity<?> deleteByUsername(@PathVariable String username){
 
-        String username = nuevoUsuario.getUserName();
+        System.out.println("intentando borrar un elemento " + username);
         try {
-
-            if (usuarioService.existsByNombreUsuario(username)){
-                Long id = usuarioService.getByNombreUsuario(username).get().getId();
-                System.out.println("correcto");
-
-                Usuario usuario = mapper.updatemap(nuevoUsuario,id);
-                usuarioService.save(usuario);
-
-            }
-            return ResponseEntity.status(HttpStatus.OK).body(usuarioService.getByNombreUsuario(username));
-
+            return ResponseEntity.status(HttpStatus.OK).body(usuarioService.delete(username));
         }catch (Exception e){
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Error al actualizar. Por favor intente mas tarde.\"}");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Error al intentar borrar un elemento.  Por favor intente mas tarde.\"}");
 
         }
     }
 
-    /*
-     ********+ FUNCIONES SOLO USER ***********
 
-     * BUSCAR POR USERNAME O EMAIL
-     * UPDATE DE SUS DATOS BUSCANDO POR USERNAME O EMAIL
-     * ELIMINAR POR ID O NOMBRE?
-     * PRACTICANDO GIT
 
-     */
+
+
 
 
 
