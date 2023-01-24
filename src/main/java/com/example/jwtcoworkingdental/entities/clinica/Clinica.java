@@ -3,6 +3,9 @@ package com.example.jwtcoworkingdental.entities.clinica;
 import com.example.jwtcoworkingdental.entities.generico.Generico;
 import com.example.jwtcoworkingdental.security.entity.Usuario;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -40,12 +43,18 @@ public class Clinica extends Generico {
     }
 
     //asociaciones
-
+    /**
+     * asociación de la tabla clínica con la tabla user.
+     */
     @ManyToMany(fetch = FetchType.EAGER)
+    @OnDelete( action = OnDeleteAction.CASCADE )
     @JoinTable(name = "ADMINISTRA",
             joinColumns = {
                     @JoinColumn(name = "CLINICA_ID")
+
+
             },
+
             inverseJoinColumns = {
                     @JoinColumn(name = "USER_ID") })
     private Set<Usuario> administra;
