@@ -81,4 +81,27 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
+    /**
+     * funcion de borrado
+     * @param username
+     */
+    @Transactional//estos métodos harán transacciones
+    public boolean delete(String username) throws Exception {
+
+        System.out.println("delete service");
+        try{
+            if(usuarioRepository.existsByUserName(username)){
+                Long id = usuarioRepository.findUsuarioByUserName(username).get().getId();
+                System.out.println(id);
+                //usuarioRepository.deleteByUserName(id);
+                usuarioRepository.deleteById(id);
+                return true;
+            }
+            throw new Exception();
+
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
 }
