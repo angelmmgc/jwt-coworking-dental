@@ -18,6 +18,54 @@
 
 -- Table: public.administra
 
+--CREANDO DATABASE
+--CREATE TABLE IF NOT EXISTS public.user_roles
+--(
+--user_id bigint NOT NULL,
+--role_id bigint NOT NULL,
+--CONSTRAINT user_roles_pkey PRIMARY KEY (user_id, role_id),
+--CONSTRAINT fk2chxp26bnpqjibydrikgq4t9e FOREIGN KEY (user_id)
+--REFERENCES public.usuarios (id) MATCH SIMPLE
+--ON UPDATE NO ACTION
+--ON DELETE CASCADE,
+--CONSTRAINT fk9lasceq82f1y6pltnys5ovctw FOREIGN KEY (role_id)
+--REFERENCES public.rol (id) MATCH SIMPLE
+--ON UPDATE NO ACTION
+--ON DELETE NO ACTION
+--)
+
+--
+--CREATE TABLE IF NOT EXISTS public.user_roles
+--(
+--    user_roles bigint NOT NULL,
+--    usuario_id bigint NOT NULL,
+--    CONSTRAINT pk_cb_pedido PRIMARY KEY (user_roles,usuario_id),
+--    CONSTRAINT u_cb_usuario_id FOREIGN KEY (usuario_id)
+--    CONSTRAINT u_cb_idusuario FOREIGN KEY (user_roles)
+--    REFERENCES public.roles (id) MATCH SIMPLE
+--        ON UPDATE NO ACTION
+--        ON DELETE CASCADE
+--    CONSTRAINT u_cb_usuario_id FOREIGN KEY (usuario_id)
+--    REFERENCES public.usuarios (id) MATCH SIMPLE
+--        ON UPDATE CASCADE
+--        ON DELETE CASCADE
+--)
+--
+--CREATE TABLE IF NOT EXISTS public.administra
+--(
+--    clinica_id bigint NOT NULL,
+--    usuario_id bigint NOT NULL,
+--    CONSTRAINT pk_cb_pedido PRIMARY KEY (usuario_id,clinica_id),
+--    CONSTRAINT u_cb_usuario_id FOREIGN KEY (usuario_id)
+--        REFERENCES public.usuarios (id) MATCH SIMPLE
+--        ON UPDATE CASCADE
+--        ON DELETE CASCADE
+--
+--   CONSTRAINT u_cb_clinica_id FOREIGN KEY (clinica_id)
+--        REFERENCES public.clinica (id) MATCH SIMPLE
+--        ON UPDATE CASCADE
+--        ON DELETE CASCADE
+--)
 
 --ROLES
 INSERT INTO rol (rol_nombre) VALUES ('ROLE_USER');
