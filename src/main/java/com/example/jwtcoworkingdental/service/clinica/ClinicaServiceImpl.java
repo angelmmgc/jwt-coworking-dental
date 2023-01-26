@@ -12,6 +12,7 @@ import com.example.jwtcoworkingdental.service.generico.GenericoServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -44,18 +45,18 @@ public class ClinicaServiceImpl extends GenericoServiceImpl<Clinica, Long> imple
      * @return
      * @throws Exception
      */
-    public Clinica saveClinicaDTO(ClinicaInDTO clinicaInDTO,String nombre_usuario) throws Exception {
+    public Clinica saveClinicaDTO(String nombre_usuario,ClinicaInDTO clinicaInDTO) throws Exception {
 
         //obtenemos el usuario admin por usename
         Optional<Usuario>usuario = usuarioRepository.findUsuarioByUserName(nombre_usuario);
-        //guardamo el id
+        //guardamos id
         Long id = usuario.get().getId();
-        //creamos un usuario donde gardamos el id
+        //creamos un usuario donde guardamos id
         Usuario user = new Usuario();
         user.setId(id);
         //creamos usuario de tipo set
         Set<Usuario> usuarios = new HashSet<>();
-        //añadimos el id admin
+        //añadimos id admin
         usuarios.add(user);
         //añadimos el admin al dto
         clinicaInDTO.setAdministra(usuarios);
@@ -102,6 +103,21 @@ public class ClinicaServiceImpl extends GenericoServiceImpl<Clinica, Long> imple
 
     }
 
+    /**
+     *
+     * @return lista de clínicas
+     */
+    public List<Clinica> getAllClinicas(){
+
+        return clinicaRepository.findAll();
+
+    }
 
 
+    @Override
+    public Clinica findByNombre(String nombre) throws Exception {
+
+        System.out.println(nombre);
+        return clinicaRepository.findByNombre(nombre).get();
+    }
 }
