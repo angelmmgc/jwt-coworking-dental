@@ -50,18 +50,19 @@ public class MainSecurty  {
         http.authenticationManager(authenticationManager);
         http.csrf().disable();
         http.cors();
-
+        /*
+         ******** USUARIOS AUTORIZACIONES*********
+        */
         //login
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/auth").permitAll();//autorizado cualquiera para un nuevo registro
         http.authorizeRequests().antMatchers("/auth/login").permitAll();//autorizado cualquiera para logearse
 
-        //busqueda
+        //búsqueda
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/auth/getall").hasRole("ADMIN");//solo los administradores tienen acceso a todos los usuarios
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/auth/username/{username}").hasAnyRole("ADMIN","USER");//solo administrador puede buscar usuario por nombre
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/auth/email/{email}").hasAnyRole("ADMIN","USER");//solo administrador puede buscar usuario por nombre
-        http.authorizeRequests().antMatchers("/clinicas/**").hasRole("ADMIN");//administrador tiene acceso a todas los servicios de las clinicas
-        http.authorizeRequests().antMatchers(HttpMethod.GET,"/clinicas/{id}").hasRole("USER");//busqueda de clinicas con role de usuario
-        http.authorizeRequests().antMatchers(HttpMethod.GET,"/clientes").hasRole("USER");
+
+
         http.authorizeRequests().antMatchers(HttpMethod.PUT,"/auth/username").hasRole("ADMIN");//solo administrador puede borrar usuario por nombre
 
         //delete
@@ -71,6 +72,21 @@ public class MainSecurty  {
         //update
         http.authorizeRequests().antMatchers(HttpMethod.PUT,"/auth/username").hasAnyRole("ADMIN","USER");//solo administrador puede borrar usuario por nombre
         http.authorizeRequests().antMatchers(HttpMethod.PUT,"/auth/email").hasAnyRole("ADMIN","USER");//solo administrador puede borrar usuario por nombre
+
+
+        /*
+         ******** CLÍNICAS AUTORIZACIONES *********
+         */
+        //http.authorizeRequests().antMatchers("/clinicas/**").hasRole("ADMIN");//administrador tiene acceso a todas los servicios de las clinicas
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/clinicas/one/{nombre}").hasAnyRole("ADMIN","USER");//busqueda de una clinica por nombre
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/clinicas/getall").hasAnyRole("ADMIN","USER");//url buscar todas las clínicas
+
+        //crear  clinica
+        http.authorizeRequests().antMatchers(HttpMethod.POST,"/clinicas/save").hasRole("ADMIN");//autorización para crear una clinica solo ADMIN
+        //update clinica
+        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/clinicas/update").hasRole("ADMIN");//autorización para hacer update de una clinica
+        //delete clinica
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/clinicas/delete/{id}").hasRole("ADMIN");//autorización delete clinica
 
 
         http.exceptionHandling().authenticationEntryPoint(jwtEntryPoint);
