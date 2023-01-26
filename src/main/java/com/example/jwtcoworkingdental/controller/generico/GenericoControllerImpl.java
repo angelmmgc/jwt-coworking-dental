@@ -40,6 +40,24 @@ public abstract class GenericoControllerImpl  <E extends Generico,S extends Gene
 
         }
     }
+
+    //creo que realmente no me hace falta aqui, mejor en el controlador de la clinica
+    //tengo que comprobar que con este metodo puedo encotrar
+    //cualquier cosa por nombre de forma generica
+//    @GetMapping("/findOne/{nombre}")
+//    public ResponseEntity<?> findByNombre(@PathVariable String nombre) {
+//
+//        System.out.println("BUSCANDO CLINICA POR NOMBRE");
+//        try {
+//            return ResponseEntity.status(HttpStatus.OK).body(servicio.findByNombre(nombre));
+//        }catch (Exception e){
+//
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Error al intentar borrar un elemento.  Por favor intente mas tarde.\"}");
+//
+//        }
+//    }
+
+
     @PostMapping("")
     public ResponseEntity<?> save(@RequestBody E entity){
         try {
@@ -80,13 +98,6 @@ public abstract class GenericoControllerImpl  <E extends Generico,S extends Gene
 
         }
     }
-
-    @GetMapping("/saludo_generico")
-    public String saludo(){
-        return "saludos desde generico";
-    }
-
-
 
 
 }
