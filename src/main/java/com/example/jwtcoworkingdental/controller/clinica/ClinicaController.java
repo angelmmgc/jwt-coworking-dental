@@ -4,6 +4,7 @@ import com.example.jwtcoworkingdental.controller.generico.GenericoControllerImpl
 import com.example.jwtcoworkingdental.dto.clinica.ClinicaInDTO;
 import com.example.jwtcoworkingdental.entities.clinica.Clinica;
 import com.example.jwtcoworkingdental.mapper.ClinicaInDTOtoClinica;
+import com.example.jwtcoworkingdental.repositories.clinica.ClinicaRepository;
 import com.example.jwtcoworkingdental.security.entity.Usuario;
 import com.example.jwtcoworkingdental.security.jwt.JwtProvider;
 import com.example.jwtcoworkingdental.security.jwt.JwtTokenFilter;
@@ -26,7 +27,8 @@ import java.util.Date;
 import java.util.Optional;
 
 /**
- * solo tienen acceso los administradores
+ * Clase de tipo @RestController, que sirve como punto de entrada a la aplicación
+ * desde varios métodos para realizar funciones Crud de la misma.
  */
 @RestController
 @CrossOrigin(origins = "*")//anotacion que permite acceder desde cualquier tipo de aplicación
@@ -42,7 +44,15 @@ public class ClinicaController extends GenericoControllerImpl<Clinica,ClinicaSer
 
     @Autowired
     UsuarioRepository usuario;
-    //funciones genéricas de obtener todos, buscar por id,borrar
+
+    @Autowired
+    ClinicaRepository clinicaRepository;
+
+    @Autowired
+    ClinicaServiceImpl clinicaService;
+
+    //metodos crud buscar, crear, eliminar y actualizar
+    //funciones genéricas de obtener todos, buscar with id, borrar
     //si actualizo por método genérico me borra el administrador que ha realizado la actualización,
     //ya que extienden de la clase GenericoControllerImpl
     //PARA BUSQUEDAS ESPECIFICAS DEBO IMPLEMENTARLAS EN UNA INTERFACE
@@ -50,14 +60,15 @@ public class ClinicaController extends GenericoControllerImpl<Clinica,ClinicaSer
 
     /**
      *
-     * metodo para guardar un clinica por un administrador
-     * @param clinicaInDTO
-     * @param req
-     * @return
-     * @throws ServletException
-     * @throws IOException
+     * Guarda una clínica por un administrador.
+     * @param clinicaInDTO . Datos pasados por json.
+     * @param req . Parámetro de tipo HttpServletRequest para obtener datos de la cabecera de la petición.
+     * @return . Status ok y clínica creada.
+     *          . Status NOT FOUND en caso de consulta errónea.
+     * @throws ServletException . Excepciones de tipo.
+     * @throws IOException .Excepciones de tipo.
      */
-    @PostMapping("/saveClinicaByAdmin")
+    @PostMapping("/save")
     public ResponseEntity<?> saveClinicaByAdmin(@RequestBody ClinicaInDTO clinicaInDTO, HttpServletRequest req)throws ServletException, IOException {
 
         //obtenemos el token
@@ -68,7 +79,7 @@ public class ClinicaController extends GenericoControllerImpl<Clinica,ClinicaSer
         try
         {
             return ResponseEntity.status(HttpStatus.OK).
-                    body(servicio.saveClinicaDTO(clinicaInDTO,nombre_usuario));
+                    body(servicio.saveClinicaDTO(nombre_usuario,clinicaInDTO));
         }catch (Exception e){
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\":\"Error. Al insertar los datos de la clinica.\"}");
@@ -78,14 +89,15 @@ public class ClinicaController extends GenericoControllerImpl<Clinica,ClinicaSer
     }
 
     /**
-     * metodo para actualizar una clinica por un administrador
-     * @param clinicaInDTO
-     * @param req
-     * @return
-     * @throws ServletException
-     * @throws IOException
+     * Actualizar una clínica por un administrador
+     * @param clinicaInDTO . Datos pasados por json.
+     * @param req . Parámetro de tipo HttpServletRequest para obtener datos de la cabecera de la petición.
+     * @return . Status ok y clínica actualizada.
+     *          . Status NOT FOUND en caso de consulta errónea.
+     * @throws ServletException . Excepciones de tipo.
+     * @throws IOException .Excepciones de tipo.
      */
-    @PutMapping("/updateClinicaByAdmin")
+    @PutMapping("/update")
     public ResponseEntity<?> updateClinicaByAdmin(@RequestBody ClinicaInDTO clinicaInDTO, HttpServletRequest req)throws ServletException, IOException {
 
         //obtenemos el token
@@ -105,8 +117,67 @@ public class ClinicaController extends GenericoControllerImpl<Clinica,ClinicaSer
 
     }
 
+    /**
+     * elimina clínica. Solo admin.
+     * @param id . Parámetro pasado por url.
+     * @return . Status ok y retorna true.
+     *         . Status NOT FOUND en caso de consulta errónea.
+     */
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id){
 
-    //BUSQUEDAS DE CLINICAS POR NOMBRE (CON ROLE DE USUARIO)
+        System.out.println("intentando borrar un elemento " + id);
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(servicio.delete(id));
+        }catch (Exception e){
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Error al intentar borrar un elemento.  Por favor intente mas tarde.\"}");
+
+        }
+
+    }
+
+
+
+    /**
+     * listado de todas las clínicas, podrán acceder ADMIN y USER.
+     * @return . Status ok y listado en caso de consulta correcta.
+     *         . Status NOT FOUND en caso de consulta errónea.
+     */
+    @GetMapping("/getall")
+    public ResponseEntity<?> getAll(){
+
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(servicio.getAllClinicas());
+        }catch (Exception e){
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Error al intentar borrar un elemento.  Por favor intente mas tarde.\"}");
+
+        }
+    }
+
+    /**
+     * busca clínica por nombre.
+     *
+     * @param   nombre .Parámetro pasado por url.
+     * @return . Status ok y se muestra clínica en caso de consulta correcta.
+     *         . Status NOT FOUND en caso de consulta errónea.
+     */
+    @GetMapping("/one/{nombre}")
+    public ResponseEntity<?> findByNombre(@PathVariable String nombre) {
+
+        System.out.println("BUSCANDO CLINICA POR NOMBRE");
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(servicio.findByNombre(nombre));
+        }catch (Exception e){
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Error al intentar borrar un elemento.  Por favor intente mas tarde.\"}");
+
+        }
+    }
+
+
+
 
 
 
