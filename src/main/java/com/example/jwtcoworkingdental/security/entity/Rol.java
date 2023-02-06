@@ -3,9 +3,12 @@ package com.example.jwtcoworkingdental.security.entity;
 
 
 import com.example.jwtcoworkingdental.security.enums.RolNombre;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Entity
 public class Rol {
@@ -17,6 +20,9 @@ public class Rol {
     @NotNull
     @Enumerated(EnumType.STRING)
     private RolNombre rolNombre;
+
+//    @ManyToMany(mappedBy = "roles")
+//    private Set<Usuario> usuarios;
 
 
     public Rol() {
@@ -41,4 +47,12 @@ public class Rol {
     public void setRolNombre(RolNombre rolNombre) {
         this.rolNombre = rolNombre;
     }
+
+//    public Set<Usuario> getUsuarios() {
+//        return usuarios;
+//    }
+//
+//    public void setUsuarios(Set<Usuario> usuarios) {
+//        this.usuarios = usuarios;
+//    }
 }
