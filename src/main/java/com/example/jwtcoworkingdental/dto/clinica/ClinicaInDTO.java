@@ -1,7 +1,7 @@
 package com.example.jwtcoworkingdental.dto.clinica;
 
 
-import com.example.jwtcoworkingdental.security.entity.Rol;
+import com.example.jwtcoworkingdental.entities.gabinete.Gabinete;
 import com.example.jwtcoworkingdental.security.entity.Usuario;
 
 import java.util.HashSet;
@@ -18,6 +18,8 @@ public class ClinicaInDTO {
     private int numGabinetes;
 
     private Set<Usuario> administra = new HashSet<>();
+
+    private Set<Gabinete> gabinetes = new HashSet<>();
 
 
 
@@ -80,5 +82,11 @@ public class ClinicaInDTO {
         this.administra = administra;
     }
 
+    public Set<Gabinete> getGabinetes() {
+        return gabinetes;
+    }
 
+    public void setGabinetes(Set<Gabinete> gabinetes) {
+        this.gabinetes = gabinetes;
+    }
 }

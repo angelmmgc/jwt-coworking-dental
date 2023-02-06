@@ -1,13 +1,14 @@
 package com.example.jwtcoworkingdental.entities.clinica;
 
+import com.example.jwtcoworkingdental.entities.gabinete.Gabinete;
 import com.example.jwtcoworkingdental.entities.generico.Generico;
 import com.example.jwtcoworkingdental.security.entity.Usuario;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -32,14 +33,60 @@ public class Clinica extends Generico {
     //constructor
     public Clinica() {
     }
+//
+//    public Clinica(String nombre, String email, String telefono, String direccion, int numGabinetes, Set<Usuario> administra) {
+//        this.nombre = nombre;
+//        this.email = email;
+//        this.telefono = telefono;
+//        this.direccion = direccion;
+//        this.numGabinetes = numGabinetes;
+//        this.administra = administra;
+//    }
+//
+//    public Clinica(String nombre, String email, String telefono, String direccion, int numGabinetes, Set<Usuario> administra, Set<Gabinete> gabinetes) {
+//        this.nombre = nombre;
+//        this.email = email;
+//        this.telefono = telefono;
+//        this.direccion = direccion;
+//        this.numGabinetes = numGabinetes;
+//        this.administra = administra;
+//        this.gabinetes = gabinetes;
+//    }
+//
+//
+//    public Clinica(String email, String telefono, String direccion, int numGabinetes, Set<Usuario> administra, Set<Gabinete> gabinetes) {
+//        this.email = email;
+//        this.telefono = telefono;
+//        this.direccion = direccion;
+//        this.numGabinetes = numGabinetes;
+//        this.administra = administra;
+//        this.gabinetes = gabinetes;
+//    }
+//
+//    public Clinica(Long id, String email, String telefono, String direccion, int numGabinetes, Set<Usuario> administra, Set<Gabinete> gabinetes) {
+//        super(id);
+//        this.email = email;
+//        this.telefono = telefono;
+//        this.direccion = direccion;
+//        this.numGabinetes = numGabinetes;
+//        this.administra = administra;
+//        this.gabinetes = gabinetes;
+//    }
+//
+//    public Clinica(Long id, String nombre, String email, String telefono, String direccion, int numGabinetes, Set<Usuario> administra, Set<Gabinete> gabinetes) {
+//        super(id);
+//        this.nombre = nombre;
+//        this.email = email;
+//        this.telefono = telefono;
+//        this.direccion = direccion;
+//        this.numGabinetes = numGabinetes;
+//        this.administra = administra;
+//        this.gabinetes = gabinetes;
+//    }
 
-    public Clinica(String nombre, String email, String telefono, String direccion, int numGabinetes, Set<Usuario> administra) {
-        this.nombre = nombre;
-        this.email = email;
-        this.telefono = telefono;
-        this.direccion = direccion;
+    public Clinica(Long id, int numGabinetes) {
+        super(id);
         this.numGabinetes = numGabinetes;
-        this.administra = administra;
     }
 
     //asociaciones
@@ -54,10 +101,12 @@ public class Clinica extends Generico {
 
 
             },
-
             inverseJoinColumns = {
                     @JoinColumn(name = "USER_ID") })
     private Set<Usuario> administra;
+
+    @OneToMany(mappedBy = "clinica",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    private Set<Gabinete> gabinetes = new HashSet<>();
 
 
     public String getNombre() {
@@ -106,5 +155,26 @@ public class Clinica extends Generico {
 
     public void setAdministra(Set<Usuario> administra) {
         this.administra = administra;
+    }
+
+    public Set<Gabinete> getGabinetes() {
+        return gabinetes;
+    }
+
+    public void setGabinetes(Set<Gabinete> gabinetes) {
+        this.gabinetes = gabinetes;
+    }
+
+    @Override
+    public String toString() {
+        return "Clinica{" +
+                "nombre='" + nombre + '\'' +
+                ", email='" + email + '\'' +
+                ", telefono='" + telefono + '\'' +
+                ", direccion='" + direccion + '\'' +
+                ", numGabinetes=" + numGabinetes +
+                ", administra=" + administra +
+                ", gabinetes=" + gabinetes +
+                '}';
     }
 }

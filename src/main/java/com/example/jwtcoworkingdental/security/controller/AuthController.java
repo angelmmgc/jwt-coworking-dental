@@ -55,7 +55,7 @@ public class AuthController {
 
 /*
             ********+FUNCIONES PARA NUEVO USUARIO ( register )***********
- */
+*/
     /**
      * Método de registro
      * @param nuevoUsuario Parámetro pasado en el cuerpo de la petición.
@@ -107,8 +107,12 @@ public class AuthController {
     }
 
     /*
-     ********+ FUNCIONES PARA TODOS LOS USUARIOS TANTO ADMIN COMO CLIENTES REGISTRADOS (login,getUserByUsername,getUserByEmail,updateUserByUsername) ***********
+     *********************************************************************************
+        FUNCIONES PARA TODOS LOS USUARIOS TANTO ADMIN COMO CLIENTES REGISTRADOS
+        (login,getUserByUsername,getUserByEmail,updateUserByUsername,updateUserByEmail)
+     *********************************************************************************
      */
+
 
     /**
      *
@@ -251,11 +255,9 @@ public class AuthController {
 
 
     /*
-     ********+ FUNCIONES PARA TODOS LOS USUARIOS TANTO ADMIN COMO CLIENTES REGISTRADOS (login,getUserByUsername,getUserByEmail,updateUserByUsername) ***********
-     ********+ FUNCIONES SOLO ADMIN (getAll, deleteByUsername)***********
-     * TENER UN LISTADO DE TODOS LOS USUARIOS
-     * ELIMINAR POR ID O NOMBRE
-     * TIENE SENTIDO QUE UN ADMIN CREE UN USUARIO USER?
+    ********+********************************************************************
+               FUNCIONES SOLO ADMIN (getAll, deleteByUsername)
+    ******************************************************************************
      */
 
 

@@ -17,11 +17,14 @@ public class Generico implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+//    private String nombre;
     //CONSTRUCT
     public Generico() {
     }
 
+//    public Generico( String nombre) {
+//        this.nombre = nombre;
+//    }
 
     public Generico(Long id) {
         this.id = id;
@@ -35,4 +38,12 @@ public class Generico implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+//    public String getNombre() {
+//        return nombre;
+//    }
+//
+//    public void setNombre(String nombre) {
+//        this.nombre = nombre;
+//    }
 }

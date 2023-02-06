@@ -11,5 +11,4 @@ import java.io.Serializable;
 public interface ClinicaService<E extends Generico,ID extends Serializable> {
 
 
-
 }

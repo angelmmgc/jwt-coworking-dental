@@ -60,6 +60,8 @@ public abstract class GenericoControllerImpl  <E extends Generico,S extends Gene
 
     @PostMapping("")
     public ResponseEntity<?> save(@RequestBody E entity){
+
+
         try {
             return ResponseEntity.status(HttpStatus.OK).body(servicio.save(entity));
         }catch (Exception e){

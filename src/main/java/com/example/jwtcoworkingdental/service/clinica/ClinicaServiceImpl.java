@@ -3,6 +3,7 @@ package com.example.jwtcoworkingdental.service.clinica;
 
 import com.example.jwtcoworkingdental.dto.clinica.ClinicaInDTO;
 import com.example.jwtcoworkingdental.entities.clinica.Clinica;
+import com.example.jwtcoworkingdental.entities.gabinete.Gabinete;
 import com.example.jwtcoworkingdental.mapper.ClinicaInDTOtoClinica;
 import com.example.jwtcoworkingdental.repositories.clinica.ClinicaRepository;
 import com.example.jwtcoworkingdental.repositories.generico.GenericoRepository;
@@ -30,7 +31,7 @@ public class ClinicaServiceImpl extends GenericoServiceImpl<Clinica, Long> imple
     private final UsuarioRepository usuarioRepository;
 
 
-    public ClinicaServiceImpl(GenericoRepository<Clinica, Long> genericoRepository, ClinicaInDTOtoClinica mapper, ClinicaRepository clinicaRepository, UsuarioRepository usuarioRepository) {
+   public ClinicaServiceImpl(GenericoRepository<Clinica, Long> genericoRepository, ClinicaInDTOtoClinica mapper, ClinicaRepository clinicaRepository, UsuarioRepository usuarioRepository) {
         super(genericoRepository);
         this.mapper = mapper;
         this.clinicaRepository = clinicaRepository;
@@ -39,7 +40,8 @@ public class ClinicaServiceImpl extends GenericoServiceImpl<Clinica, Long> imple
 
 
     /**
-     * funion guarda un usario si es admin
+     * función guarda un usario si es admin
+     *
      * @param clinicaInDTO
      * @param nombre_usuario
      * @return
@@ -58,8 +60,7 @@ public class ClinicaServiceImpl extends GenericoServiceImpl<Clinica, Long> imple
         Set<Usuario> usuarios = new HashSet<>();
         //añadimos id admin
         usuarios.add(user);
-        //añadimos el admin al dto
-        clinicaInDTO.setAdministra(usuarios);
+
         //transformamos los datos
         Clinica clinica = mapper.map(clinicaInDTO);
 

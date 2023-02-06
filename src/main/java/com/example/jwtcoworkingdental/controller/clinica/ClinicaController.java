@@ -36,20 +36,20 @@ import java.util.Optional;
 public class ClinicaController extends GenericoControllerImpl<Clinica,ClinicaServiceImpl> {
 
 
-    @Autowired
-    JwtTokenFilter jwtTokenFilter;
+//    @Autowired
+//    JwtTokenFilter jwtTokenFilter;
 
     @Autowired
     JwtProvider jwtProvider;
 
-    @Autowired
-    UsuarioRepository usuario;
-
-    @Autowired
-    ClinicaRepository clinicaRepository;
-
-    @Autowired
-    ClinicaServiceImpl clinicaService;
+//    @Autowired
+//    UsuarioRepository usuario;
+//
+//    @Autowired
+//    ClinicaRepository clinicaRepository;
+//
+//    @Autowired
+//    ClinicaServiceImpl clinicaService;
 
     //metodos crud buscar, crear, eliminar y actualizar
     //funciones genéricas de obtener todos, buscar with id, borrar
@@ -151,7 +151,7 @@ public class ClinicaController extends GenericoControllerImpl<Clinica,ClinicaSer
             return ResponseEntity.status(HttpStatus.OK).body(servicio.getAllClinicas());
         }catch (Exception e){
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Error al intentar borrar un elemento.  Por favor intente mas tarde.\"}");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Error al intentar listar todos los elementos.  Por favor intente mas tarde.\"}");
 
         }
     }

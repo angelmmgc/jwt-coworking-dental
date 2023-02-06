@@ -42,7 +42,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
             try {
-                //guardamo el token
+                //guardamos el token
                 String token = getToken(req);
                 //comparamos que el token existe y que es valido
                 if (token != null && jwtProvider.validateToken(token)) {
@@ -53,7 +53,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                     //Autenticamos al usuario
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
-                    //lo pasamos al contexto de autenticacion
+                    //lo pasamos al contexto de autenticación
                     SecurityContextHolder.getContext().setAuthentication(auth);
 
                 }

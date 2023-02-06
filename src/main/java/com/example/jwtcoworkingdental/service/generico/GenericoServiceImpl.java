@@ -48,6 +48,8 @@ public abstract class GenericoServiceImpl <E extends Generico,ID extends Seriali
         }
     }
 
+
+
     @Override
     @Transactional//estos metodos haran transacciones
     public E save(E entity) throws Exception {
