@@ -21,5 +21,5 @@ public interface GenericoController <E extends Generico,ID extends Serializable>
     ResponseEntity<?> update(@PathVariable ID id, @RequestBody E entity);
     ResponseEntity<?> delete(@PathVariable ID Id);
 
-    ResponseEntity<?> findByNombre(@PathVariable String nombre);
+    //ResponseEntity<?> findByNombre(@PathVariable String nombre);
 }
